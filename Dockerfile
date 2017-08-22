@@ -1,5 +1,12 @@
-FROM ubuntu:14.04
-MAINTAINER Fabio Rehm "fgrehm@gmail.com"
+############################################################
+# Dockerfile to build netbeans container images
+# Based on work by Fabio Rehm (fgrehm@gmail.com)
+FROM [user.id]/[parent.repository][parent.tag]
+
+###########################################################
+# File Author / Maintainer
+MAINTAINER [user.name] "[user.email]"
+################## BEGIN INSTALLATION ######################
 
 RUN sed 's/main$/main universe/' -i /etc/apt/sources.list && \
     apt-get update && apt-get install -y software-properties-common && \
@@ -25,8 +32,8 @@ RUN chmod +x /usr/local/bin/netbeans && \
     mkdir -p /home/developer && \
     echo "developer:x:1000:1000:Developer,,,:/home/developer:/bin/bash" >> /etc/passwd && \
     echo "developer:x:1000:" >> /etc/group && \
-    echo "developer ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/developer && \
-    chmod 0440 /etc/sudoers.d/developer && \
+    #echo "developer ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/developer && \
+    #chmod 0440 /etc/sudoers.d/developer && \
     chown developer:developer -R /home/developer
 
 USER developer

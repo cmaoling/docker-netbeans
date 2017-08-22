@@ -1,0 +1,3 @@
+[submodule "docker-moneymanagerex"]
+	path = MoneyManagerEx
+	url = https://github.com/cmaoling/docker-moneymanagerex.git

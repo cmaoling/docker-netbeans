@@ -1,7 +1,22 @@
 #!/bin/bash
-
-docker run -ti --rm \
-           -e DISPLAY=$DISPLAY \
-           -v /tmp/.X11-unix:/tmp/.X11-unix \
-           -v `pwd`:/workspace \
-           fgrehm/netbeans:v8.0.1
+#based on https://github.com/fgrehm/docker-netbeans
+VERSION=v8.0.1
+DISPLAY=:0
+TOOL=${PWD##*/}
+TOOL=`echo $TOOL | tr '[:upper:]' '[:lower:]'`
+GIT=`which git`
+ID=fgrehm  #`$GIT config --get user.id`
+echo "Starting $ID/$TOOL:$VERSION on display $DISPLAY"
+docker pull $ID/$TOOL:$VERSION
+containerDir=`pwd`
+containerId=`docker create -e DISPLAY=$DISPLAY   -v /tmp/.X11-unix:/tmp/.X11-unix:rw -v $containerDir/.netbeans-docker:/home/developer/.netbeans  -v $containerDir:/workspace $ID/$TOOL:$VERSION` 
+containerHostname=`docker inspect --format='{{ .Config.Hostname }}' $containerId`
+echo "  containerId : $containerId"`docker logs $containerId`
+echo "  containerHostname $containerHostname"
+echo "   - XHOST: "`xhost +local:$containerHostname`
+echo "Starting Container $containerId : "`docker start -i $containerId`
+echo "Container $containerId stopped/exited: "`docker logs $containerId`
+echo "Cleanup: "
+#echo "   - XHOST: "`xhost -local:$containerHostname`
+#http://wiki.ros.org/docker/Tutorials/GUI
+echo "Done."
